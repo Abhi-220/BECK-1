@@ -34,9 +34,9 @@ jobs:
       env: 
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
-    - name: Terraform Apply
+    - name: Terraform Destroy
       #if: github.ref == 'refs/head/main' && github.event_name == 'push'
-      run: terraform apply -auto-approve tfplan
+      run: terraform destroy -auto-approve tfplan
       working-directory: ./Terraform
       env: 
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
