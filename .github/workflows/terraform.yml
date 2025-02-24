@@ -1,0 +1,43 @@
+name: Terraform GKE and Helm Deployment
+
+on:
+  push:
+    branches:
+      - main  # Or the branch you want to trigger the workflow
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the repository
+      uses: actions/checkout@v2
+
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 1.10.5 # Adjust to your desired Terraform version
+
+    - name: Configure GCP credentials
+      run: echo "${{ secrets.GCP_CREDENTIALS }}" > $HOME/gcp-credentials.json
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: $HOME/gcp-credentials.json
+
+    - name: Set up Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v0
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        credentials_file: $HOME/gcp-credentials.json
+        export_default_credentials: true
+
+    - name: Initialize Terraform
+      run: terraform init
+
+    - name: Run Terraform plan
+      run: terraform plan -out=tfplan
+
+    - name: Apply Terraform plan
+      run: terraform apply -auto-approve tfplan
+
+    - name: Clean up
+      run: rm $HOME/gcp-credentials.json
