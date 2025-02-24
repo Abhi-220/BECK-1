@@ -21,6 +21,7 @@ jobs:
 
     - name: Initialize Terraform
       run: terraform init
+      working-directory: ./Terraform
       env: 
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
@@ -29,12 +30,14 @@ jobs:
 
     - name: Run Terraform plan
       run: terraform plan
+      working-directory: ./Terraform
       env: 
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
     - name: Terraform Apply
       if: github.ref == 'refs/head/main' && github.event_name == 'push'
       run: terraform apply -auto-approve
+      working-directory: ./Terraform
       env: 
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
