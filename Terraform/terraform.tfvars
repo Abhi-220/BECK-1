@@ -79,7 +79,7 @@ url_map_name = "beckn-url-map"
 url_map_description = "url map for beckn"
 
 
-http_proxy_name = "beckn-http-proxy"
+http_proxy_name = "beckn-lb"
 http_proxy_description = "http proxy for beckn"
 
 
