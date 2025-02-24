@@ -29,14 +29,14 @@ jobs:
       run: terraform fmt -check
 
     - name: Run Terraform plan
-      run: terraform plan
+      run: terraform plan -out=tfplan
       working-directory: ./Terraform
       env: 
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
     - name: Terraform Apply
       if: github.ref == 'refs/head/main' && github.event_name == 'push'
-      run: terraform apply -auto-approve
+      run: terraform apply -auto-approve tfplan
       working-directory: ./Terraform
       env: 
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
