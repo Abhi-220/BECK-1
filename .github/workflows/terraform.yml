@@ -27,7 +27,7 @@ jobs:
       uses: google-github-actions/setup-gcloud@v0
       with:
         project_id: ${{ secrets.GCP_PROJECT_ID }}
-        credentials_file: $HOME/gcp-credentials.json
+        credentials_file_path: $HOME/gcp-credentials.json
         export_default_credentials: true
 
     - name: Initialize Terraform
