@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main  # Or the branch you want to trigger the workflow
+  pull_request:
 
 jobs:
   terraform:
+    name: 'Terraform'
     runs-on: ubuntu-latest
 
     steps:
@@ -15,29 +17,26 @@ jobs:
 
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v1
-      with:
-        terraform_version: 1.3.0 # Adjust to your desired Terraform version
 
-    - name: Configure GCP credentials
-      run: echo "${{ secrets.GCP_CREDENTIALS }}" > $HOME/gcp-credentials.json
-      env:
-        GOOGLE_APPLICATION_CREDENTIALS: $HOME/gcp-credentials.json
-
-    - name: Set up Google Cloud SDK
-      uses: google-github-actions/setup-gcloud@v2 # Updated to v2.x.x
-      with:
-        project_id: ${{ secrets.GCP_PROJECT_ID }}
-        credentials_file: $HOME/gcp-credentials.json
-        export_default_credentials: true
 
     - name: Initialize Terraform
       run: terraform init
+      env: 
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+    - name: Terraform Format
+      run: terraform fmt -check
 
     - name: Run Terraform plan
       run: terraform plan -out=tfplan
+      env: 
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
-    - name: Apply Terraform plan
+    - name: Terraform Apply
+      if: github.ref == 'refs/head/main' && github.event_name == 'push'
       run: terraform apply -auto-approve tfplan
+      env: 
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
     - name: Clean up
       run: rm $HOME/gcp-credentials.json
